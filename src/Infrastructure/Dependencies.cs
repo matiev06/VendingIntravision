@@ -11,6 +11,6 @@ public class Dependencies
     public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
     {
         services.AddDbContext<BeverageSalesContext>(c =>
-            c.UseSqlServer(configuration.GetConnectionString("BeverageSalesConnection")));
+            c.UseSqlServer(configuration.GetConnectionString("BeverageSalesConnection")!));
     }
 }
