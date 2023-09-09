@@ -1,9 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using VendingIntravision.ApplicationCore.Entities.BeverageAggregate;
-using VendingIntravision.ApplicationCore.Exceptions;
 using VendingIntravision.ApplicationCore.Extensions;
 using VendingIntravision.ApplicationCore.Interfaces;
-using VendingIntravision.ApplicationCore.Specefications;
 
 namespace VendingIntravision.ApplicationCore.Services;
 
@@ -16,7 +14,7 @@ public class BeverageService : IBeverageService
         _beverageRepository = beverageRepository;
     }
 
-    public async Task AddItemToBeveregeAsync(string Name, string ImageUrl, decimal Price, int Quantity)
+    public async Task<Beverage> AddItemToBeveregeAsync(string Name, string ImageUrl, int Price, int Quantity)
     {
 
         IsDataValid(Name, ImageUrl, Price, Quantity);
@@ -24,14 +22,13 @@ public class BeverageService : IBeverageService
         var beverage = new Beverage(Name, ImageUrl, Price, Quantity);
 
         await _beverageRepository.AddAsync(beverage);
+
+        return beverage;
     }
 
-    public async Task ChangeOrSetDataAsync(int id, string Name, string ImageUrl, decimal Price, int Quantity)
+    public async Task ChangeOrSetDataAsync(int id, string Name, string ImageUrl, int Price, int Quantity)
     {
-        //var beverageSpec = new BeverageSpecification(id);
-        var beverage = await _beverageRepository.GetByIdAsync(id);
-
-        Guard.Against.NullBeverage(id, beverage);
+        var beverage = await GetByIdAsync(id);
 
         IsDataValid(Name, ImageUrl, Price, Quantity);
 
@@ -42,16 +39,15 @@ public class BeverageService : IBeverageService
 
     public async Task DeleteItemBeveregeAsync(int id)
     {
-        var beverage = await _beverageRepository.GetByIdAsync(id);
+        var beverage = await GetByIdAsync(id);
         await _beverageRepository.DeleteAsync(beverage);
     }
 
-    public async Task SetPriceAsync(int id, decimal Price)
+    public async Task SetPriceAsync(int id, int Price)
     {
         Guard.Against.Negative(Price, nameof(Price));
 
-        var beverage = await _beverageRepository.GetByIdAsync(id);
-        Guard.Against.NullBeverage(id, beverage);
+        var beverage = await GetByIdAsync(id);
 
         beverage.UpdateDetails(beverage.Name, beverage.ImageUrl, Price, beverage.Quantity);
 
@@ -62,15 +58,14 @@ public class BeverageService : IBeverageService
     {
         Guard.Against.Negative(Quantity, nameof(Quantity));
 
-        var beverage = await _beverageRepository.GetByIdAsync(id);
-        Guard.Against.NullBeverage(id, beverage);
+        var beverage = await GetByIdAsync(id);
 
         beverage.UpdateDetails(beverage.Name, beverage.ImageUrl, beverage.Price, Quantity);
 
         await _beverageRepository.UpdateAsync(beverage);
     }
 
-    public async Task<List<int>> GetValidDrinksAsync()
+    public async Task<List<int>> GetValidDrinksIdsAsync()
     {
         var listBeverage = await _beverageRepository.ListAsync();
 
@@ -81,6 +76,14 @@ public class BeverageService : IBeverageService
 
         return validDrinks;
     }
+    
+
+    public async Task<List<Beverage>> GetAllBeverageAsync()
+    {
+        var listBeverage = await _beverageRepository.ListAsync();
+
+        return listBeverage;
+    }
 
 
     private bool IsDataValid(string Name, string ImageUrl, decimal Price, int Quantity)
@@ -88,10 +91,27 @@ public class BeverageService : IBeverageService
         Guard.Against.NullOrEmpty(Name, nameof(Name));
         Guard.Against.NullOrEmpty(ImageUrl, nameof(ImageUrl));
         Guard.Against.Negative(Price, nameof(Price));
-        //throw new DataBeverageItemNullException($"Data Name {Name} or ImageUtl {ImageUrl} is null");
+
         if (Quantity <= 0)
             Quantity = 1;
 
         return true;
+    }
+
+    public async Task<Beverage> GetByIdAsync(int id)
+    {
+        var beverage = await _beverageRepository.GetByIdAsync(id);
+
+        Guard.Against.NullBeverage(id, beverage);
+
+        return beverage;
+    }
+
+    public async Task<Beverage> IsGetByIdAsync(int id)
+    {
+        var beverage = await _beverageRepository.GetByIdAsync(id);
+
+
+        return beverage;
     }
 }

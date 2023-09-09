@@ -9,7 +9,7 @@ public class CoinInventory : BaseEntity
         // required by EF
     }
 
-    public CoinInventory(int CoinValue, int Quamtoty, bool IsBlocked)
+    public CoinInventory(int CoinValue, int Quantity, bool IsBlocked)
     {
         this.CoinValue = CoinValue;
         this.Quantity = Quantity;

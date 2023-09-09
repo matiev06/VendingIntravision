@@ -1,8 +1,121 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Автомат с напитками";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Head{
+
+
+    <link rel="stylesheet" href="~/css/Home/index.css" />
+    <link rel="stylesheet" href="~/css/Home/Oswald.css" />
+}
+
+@section Body{
+
+    <div class="d-flex justify-content-end p-3 ">
+
+        <div class="container border p-2 m-3 rounded">
+            <div class="row">
+
+                @for (int i = 0; i < Model.Beverages.Count; i++)
+                {
+                
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="product-grid">
+                            <div class="product-image">
+                                <a class="image addCart" data-id="@Model.Beverages[i].Id">
+                                    <img class="pic-1" src="@Model.Beverages[i].ImageUrl">
+                                    <img class="pic-2" src="@Model.Beverages[i].ImageUrl">
+                                </a>
+                            </div>
+                            <div class="product-content">
+                                <span class="count-beverage text-danger border d-none" data-value="true" data-id="@Model.Beverages[i].Id">@Model.Beverages[i].Quantity</span>
+                                <h3 class="title "><a class="text-decoration-none addCart" data-id="@Model.Beverages[i].Id" >@Model.Beverages[i].Name</a></h3>
+                                <div class="price ">@Model.Beverages[i].Price рублей</div>
+                                <div class="product-button-group">
+                                    <a class="product-like-icon addCart" data-id="@Model.Beverages[i].Id" >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                                            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                        </svg>
+                                    </a>
+                                    <a class="add-to-cart addCart text-decoration-none">Выбрать</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+        <div class="flex-column">
+            <div class="user-interface bg-light border  p-2 rounded mb-4">
+                <h2 class="mb-3">Пользовательский интерфейс</h2>
+                <p>Внесите монеты:</p>
+
+                <div class="justify-content-around ">
+                    @foreach (var coin in Model.Coins)
+                    {
+                        <button type="button" class="btn btn-secondary coin-btn mb-2" disabled="@coin.IsBlocked" data-value="@coin.CoinValue">@coin.CoinValue рубль</button>
+                    }
+                </div>
+
+                <p>Выбронные напитки:</p>
+                <ul class="list-group flex-grow-1" id="cartList">
+
+                </ul>
+
+                <div class="d-flex flex-column mt-4">
+                    <button type="submit" class="btn btn-success" id="buy-button">Купить</button>
+                    <p>Ваш баланс: <span class="balance">@Model.User.Balance</span> рублей</p>
+                </div>
+            </div>
+            <div class="bg-light border  p-2 rounded mb-4">
+                <div class="product-grid">
+                    <div class="product-content">
+                        <button class="add-to-cart change-button" id="buy-button">Получить сдачу</button>
+                    </div>
+                    <div class="change" id="changeDiv"></div>
+                </div>
+            </div>
+            <form method="post" asp-controller="Home" asp-action="Index">
+                <div class="bg-light border  p-2 rounded mb-4">
+                    <div class="product-grid">
+                        <div class="product-content">
+                            <button class="add-to-cart" id="Admin">Администрация</button>
+                        </div>
+                        <div class="change" id="changeDiv"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+
+
+
+@section ScriptJs {
+
+
+    <script type="text/javascript">
+
+        let balance = @Model.User.Balance;
+        var beverages = @Json.Serialize(Model.Beverages);
+        var userID = @Model.User.Id;
+
+
+    </script>
+
+
+
+    <script type="text/javascript" src="~/js/Home/index.js"></script>
+
+
+}

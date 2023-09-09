@@ -1,0 +1,141 @@
+﻿@model AdminViewModel;
+@{
+    ViewData["Title"] = "Административный интерфейс";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Head{
+
+    <link rel="stylesheet" href="~/css/Home/Oswald.css" />
+
+    <link rel="stylesheet" href="~/css/Admin/index.css" />
+}
+
+
+@section Body{
+    <form method="post" asp-controller="Admin" asp-action="ManageBeverages" asp-route-key="MySecretKey" enctype="multipart/form-data">
+        <div class="d-flex justify-content-end p-3 ">
+
+
+            <div class="container border p-2 m-3 rounded">
+                <div class="row">
+
+                    @for (int i = 0; i < Model.Beverages.Count; i++)
+                    {
+                        <div class="col-md-3 col-sm-6 mb-4 beverage-element-@Model.Beverages[i].Id">
+                            <div class="product-grid flex-column">
+                                <div class="image addPhoto" data-id="@Model.Beverages[i].Id">
+
+                                    @if (string.IsNullOrEmpty(Model.Beverages[i].ImageUrl))
+                                    {
+                                        <img class="upload-icon image-preview" id="myuni" src="~/Images/upload-file.svg" alt="Выберите изображение"
+                                             data-id="@Model.Beverages[i].Id" style="cursor: pointer;" width="70" height="50" />
+
+                                    }
+                                    else
+                                    {
+                                        <img class="pic-1 image-preview" src="@Model.Beverages[i].ImageUrl"
+                                             data-id="@Model.Beverages[i].Id" style="cursor: pointer;" width="70" height="50">
+                                    }
+                                    <input type="file" class="image-input" id="imageInput-@Model.Beverages[i].Id" data-id="@Model.Beverages[i].Id"
+                                           accept="image/*" style="display: none;" asp-for="@Model.Beverages[i].ImageFile" />
+
+                                    <div id="result"></div>
+                                </div>
+                                <div class="product-content">
+                                    <input type="hidden" asp-for="@Model.Beverages[i].Id" value="@Model.Beverages[i].Id" />
+
+                                    <div class="beverage-div" contenteditable="true" data-id="@Model.Beverages[i].Id"
+                                         data-value="@Model.Beverages[i].Quantity" id="quantityBeverage">
+                                        @Model.Beverages[i].Quantity
+                                    </div>
+                                    <input type="hidden" id="quantityBeverageInput-@Model.Beverages[i].Id" asp-for="@Model.Beverages[i].Quantity" value="@Model.Beverages[i].Quantity" />
+
+                                    <div class="title beverage-div" contenteditable="true" data-id="@Model.Beverages[i].Id" data-value="@Model.Beverages[i].Name" id="nameBeverage">@Model.Beverages[i].Name</div>
+                                    <input type="hidden" id="nameBeverageInput-@Model.Beverages[i].Id" asp-for="@Model.Beverages[i].Name" value="@Model.Beverages[i].Name" />
+
+                                    <div class="price beverage-div" contenteditable="true" data-id="@Model.Beverages[i].Id" data-value="@Model.Beverages[i].Price" id="priceBeverage">@Model.Beverages[i].Price рублей</div>
+                                    <input type="hidden" id="priceBeverageInput-@Model.Beverages[i].Id" asp-for="@Model.Beverages[i].Price" value="@Model.Beverages[i].Price" />
+
+                                    @if (!string.IsNullOrEmpty(Model.Beverages[i].ImageUrl))
+                                    {
+                                        <div class="product-button-group flex-column">
+                                            <a class="add-to-cart text-danger rem-beverage text-decoration-none mb-3"
+                                               href="#" data-id="@Model.Beverages[i].Id">Удалить</a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+
+            <div class="flex-column">
+                <div class="user-interface bg-light border  p-2 rounded mb-4">
+                    <h2 class="mb-3">Административный интерфейс</h2>
+                    <p>Доступные монеты:</p>
+
+                    <div class="d-flex justify-content-between flex-wrap align-content-end">
+                        @for (int i = 0; i < Model.Coins.Count; i++)
+                        {
+                            int index = i;
+                            <div class=" flex-shrink-0 mb-4">
+                                <input type="hidden" asp-for="@Model.Coins[index].Id" value="@Model.Coins[index].Id" />
+
+                                @if (Model.Coins[index].IsBlocked)
+                                {
+                                    <button type="button" class="btn btn-danger unblock-btn mb-2 beverage-btn"
+                                            value="@Model.Coins[index].IsBlocked" data-id="@Model.Coins[index].Id" id="isblockCoin">
+                                        @Model.Coins[index].CoinValue рубль
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-secondary block-btn mb-2 beverage-btn"
+                                            value="@Model.Coins[index].IsBlocked" data-id="@Model.Coins[index].Id" id="isblockCoin">
+                                        @Model.Coins[index].CoinValue рубль
+                                    </button>
+                                }
+                                <input type="hidden" id="isblockCoinInput-@Model.Coins[index].Id" asp-for="@Model.Coins[index].IsBlocked" value="@Model.Coins[index].IsBlocked" />
+
+                                <div class="coins beverage-div" contenteditable="true" data-id="@Model.Coins[index].Id"
+                                     data-value="@Model.Coins[index].Quantity" id="quantityCoin">
+                                    @Model.Coins[index].Quantity
+                                </div>
+                                <input type="hidden" id="quantityCoinInput-@Model.Coins[index].Id" asp-for="@Model.Coins[index].Quantity" value="@Model.Coins[index].Quantity" />
+
+                            </div>
+                        }
+                    </div>
+
+                </div>
+                <div class="bg-light border  p-2 rounded mb-4">
+
+                    <div class="d-flex flex-column mt-4">
+                        <button type="submit" class="btn btn-success" id="save-button">Сохранить</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <form method="post" asp-controller="Admin" asp-action="Index">
+        <div class="bg-light border  p-2 rounded mb-4">
+            <div class="product-grid">
+                <div class="product-content">
+                    <button class="add-to-cart" id="Admin">Пользовательский интерфес</button>
+                </div>
+                <div class="change" id="changeDiv"></div>
+            </div>
+        </div>
+    </form>
+}
+
+
+@section ScriptJs {
+
+    <script type="text/javascript" src="~/js/Admin/Index.js"></script>
+}

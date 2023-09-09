@@ -3,7 +3,7 @@
 namespace VendingIntravision.ApplicationCore.Exceptions
 {
     [Serializable]
-    internal class DataBeverageItemNullException : Exception
+    public class DataBeverageItemNullException : Exception
     {
         public DataBeverageItemNullException()
         {

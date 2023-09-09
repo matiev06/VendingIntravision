@@ -1,4 +1,4 @@
-namespace Web.Models
+namespace VendingIntravision.Web.Models
 {
     public class ErrorViewModel
     {

@@ -1,19 +1,11 @@
 ﻿
+using VendingIntravision.ApplicationCore.Entities.BeverageAggregate;
 
 namespace VendingIntravision.ApplicationCore.Interfaces;
 
 public interface IPurchaseService
 {
-    Task<PurchaseResult> PurchaseDrinkAsync(int idBeverage, List<int> coindIds);
-    Task<decimal> CalculateChangeAsync(decimal totalAmount);
-}
-
-
-public enum PurchaseResult
-{
-    Success,
-    InsufficientFunds,
-    BeverageOutOfStock,
-    InvalidCoins,
-    OtherError
+    Task<Beverage> PurchaseDrinkAsync(int idUser, int idBeverage, int balance, int quantity = 1);
+    Task<Dictionary<int, int>> GetChangeAsync(int totalAmount);
+    Task<bool> InsertCoinsAsync(int iduser, params int[] coinDenominations);
 }

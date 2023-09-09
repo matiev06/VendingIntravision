@@ -4,7 +4,7 @@ using VendingIntravision.ApplicationCore.Entities.BeverageAggregate;
 using VendingIntravision.ApplicationCore.Entities.CoinInventoryAggregate;
 using VendingIntravision.ApplicationCore.Entities.UserAggregate;
 
-namespace Infrastructure.Data;
+namespace VendingIntravision.Infrastructure.Data;
 
 public class BeverageSalesContext : DbContext
 {

@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using VendingIntravision.ApplicationCore.Entities.BeverageAggregate;
 using VendingIntravision.ApplicationCore.Entities.CoinInventoryAggregate;
+using VendingIntravision.ApplicationCore.Entities.UserAggregate;
 using VendingIntravision.ApplicationCore.Exceptions;
 
 namespace VendingIntravision.ApplicationCore.Extensions;
@@ -20,5 +21,20 @@ public static class CoinInventoryGuards
     {
         if (coin is null)
             throw new CoinInventoryNotFoundExcetion(idCoin);
+    }
+}
+
+public static class UserGuards
+{
+    public static void NullUser(this IGuardClause clause, int idUser, User user)
+    {
+        if (user is null)
+            throw new CoinInventoryNotFoundExcetion(idUser);
+    }
+
+    public static void NullUser(this IGuardClause clause, string guidUser, User user)
+    {
+        if (user is null)
+            throw new CoinInventoryNotFoundExcetion(guidUser);
     }
 }

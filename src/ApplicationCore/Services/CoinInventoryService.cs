@@ -14,43 +14,42 @@ public class CoinInventoryService : ICoinInventoryService
 
     private readonly IRepository<CoinInventory> _coinInventoryRepository;
 
-    private readonly List<int> _validCoinsDenomination /*= new List<int>
-        {
-            1, 2, 5, 10 denominationCoin
-        }*/;
 
     public CoinInventoryService(IRepository<CoinInventory> coinInventoryRepository)
     {
         _coinInventoryRepository = coinInventoryRepository;
 
-        _validCoinsDenomination = new List<int>
-        {
-            1, 2, 5, 10
-        };
-
     }
 
-    public IReadOnlyDictionary<int, int> ValidCoinsDenomination() 
+    public async Task<IReadOnlyDictionary<int, int>> IsHaveCoinsDenomination() 
     {
-        return 
+        var listCoins = await _coinInventoryRepository.ListAsync();
+
+        return listCoins.ToDictionary(c => c.CoinValue, q => q.Quantity);
+    }
+
+    public async Task<List<CoinInventory>> GetAllCoinsDenomination()
+    {
+        var listCoins = await _coinInventoryRepository.ListAsync();
+
+        return listCoins;
     }
 
     public async Task SetQuantityToCoinInventory(int id, int quantity)
     {
-        var coinInventor = await _coinInventoryRepository.GetByIdAsync(id);
-        Guard.Against.NullCoinInventory(id, coinInventor);
+        var coinInventor = await GetByIdAsync(id);
 
         coinInventor.SetQuantity(quantity);
 
         await _coinInventoryRepository.UpdateAsync(coinInventor);
     }
 
-    public async Task AddQuantityToCoinInventory(int id, int quantity)
+    public async Task AddQuantityToCoinInventory(int CoinValue, int quantity)
     {
-        var coin = await _coinInventoryRepository.GetByIdAsync(id);
-        //if (!_validCoinsDenomination.Contains(id))
-        //    throw new NotValidCoinException($"Монета {id} недоступна.");
-        Guard.Against.NullCoinInventory(id, coin);
+        var coinSpec = new CoinInventorySpecification(CoinValue);
+        var coin = await _coinInventoryRepository.GetBySpecAsync(coinSpec);
+
+        Guard.Against.NullCoinInventory(CoinValue, coin);
 
         quantity += coin.Quantity;
 
@@ -61,34 +60,65 @@ public class CoinInventoryService : ICoinInventoryService
 
     public async Task BlockedCoinById(int id)
     {
-        var coinInventory = await _coinInventoryRepository.GetByIdAsync(id);
-
-        Guard.Against.NullCoinInventory(id, coinInventory);
+        var coinInventory = await GetByIdAsync(id);
 
         coinInventory.ChangeStatus(true);
 
         await _coinInventoryRepository.UpdateAsync(coinInventory);
     }
 
+    public async Task SetStatus(int id, bool status)
+    {
+        var coinInventory = await GetByIdAsync(id);
+
+        coinInventory.ChangeStatus(status);
+
+        await _coinInventoryRepository.UpdateAsync(coinInventory);
+    }
+
     public async Task UnblockedCoinById(int id)
     {
-        var coinInventory = await _coinInventoryRepository.GetByIdAsync(id);
-
-        Guard.Against.NullCoinInventory(id, coinInventory);
+        var coinInventory = await GetByIdAsync(id);
 
         coinInventory.ChangeStatus(false);
 
         await _coinInventoryRepository.UpdateAsync(coinInventory);
     }
 
-    public async Task<int> GetIDByCoin(int CoinValue)
+    public async Task<CoinInventory> GetByCoinAsync(int CoinValue)
     {
         var coinInventorySpec = new CoinInventorySpecification(CoinValue);
         var coinInventory = await _coinInventoryRepository.GetBySpecAsync(coinInventorySpec);
 
         Guard.Against.NullCoinInventory(CoinValue, coinInventory);
 
-        return coinInventory.Id;
+        return coinInventory;
+    }
+
+    public async Task<bool> IsBlockedCoinByCoin(int coinValue)
+    {
+        var coinInventorySpec = new CoinInventorySpecification(coinValue);
+        var coinInventory = await _coinInventoryRepository.GetBySpecAsync(coinInventorySpec);
+
+        Guard.Against.NullCoinInventory(coinValue, coinInventory);
+
+        return coinInventory.IsBlocked;
+    }
+
+    public async Task<CoinInventory> GetByIdAsync(int id)
+    {
+        var coinInventory = await _coinInventoryRepository.GetByIdAsync(id);
+
+        Guard.Against.NullCoinInventory(id, coinInventory);
+
+        return coinInventory;
+    }
+
+    public async Task<CoinInventory> IsGetByIdAsync(int id)
+    {
+        var coinInventory = await _coinInventoryRepository.GetByIdAsync(id);
+
+        return coinInventory;
     }
 
 }

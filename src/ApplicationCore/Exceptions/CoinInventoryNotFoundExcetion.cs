@@ -3,7 +3,7 @@
 namespace VendingIntravision.ApplicationCore.Exceptions
 {
     [Serializable]
-    internal class CoinInventoryNotFoundExcetion : Exception
+    public class CoinInventoryNotFoundExcetion : Exception
     {
         private int idbeverage;
 

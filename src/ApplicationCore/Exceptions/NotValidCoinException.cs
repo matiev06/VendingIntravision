@@ -3,7 +3,7 @@
 namespace VendingIntravision.ApplicationCore.Exceptions
 {
     [Serializable]
-    internal class NotValidCoinException : Exception
+    public class NotValidCoinException : Exception
     {
         public NotValidCoinException()
         {
